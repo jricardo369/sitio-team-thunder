@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thunders - Equipo de Basketball</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        :root {
+            --primary: #004EDA;
+            --secondary: #FF0000;
+            --bg: #ffffff;
+            --bg-card: #f5f5f5;
+            --text: #000000;
+            --text-muted: #666666;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        nav {
+            background: #000000;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            width: 50px;
+            height: 50px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .nav-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nav-logo-placeholder {
+            font-size: 1.5rem;
+            color: #000000;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 0 auto;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        nav a:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #000000;
+            margin: 0;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: block;
+        }
+
+        .section-title-container {
+            text-align: left;
+            margin-bottom: 3rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            border-top: 1px solid var(--secondary);
+            border-bottom: 1px solid var(--secondary);
+            padding: 0.8rem 0;
+            font-size: 32px;
+        }
+
+        .section-subtitle-container {
+            text-align: left;
+            margin-bottom: 3rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            border-bottom: 1px solid var(--secondary);
+            padding: 0.8rem 0;
+            font-size: 18px;
+        }
+
+        .coaches {
+            margin-top: 4rem;
+        }
+
+        .player-photo-placeholder {
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .player-image-placeholder {
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .player-card {
+            display: flex;
+            background: #ffffff;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 900px) {
+            .players-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 78, 218, 0.2);
+        }
+
+        .player-number-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ffffff;
+            color: #000000;
+            font-size: 2rem;
+            font-weight: 900;
+            padding: 0.5rem 1.2rem;
+            border-bottom-left-radius: 15px;
+        }
+
+        .player-left {
+            flex: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .player-name {
+            font-size: 1.4rem;
+            color: var(--text);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .player-position {
+            color: var(--secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .player-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .player-stat-value {
+            font-size: 1rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .player-right {
+            width: 160px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .player-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .player-stat-value {
+            font-size: 1rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .player-right {
+            width: 160px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-photo {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-photo img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .player-photo-placeholder {
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .player-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #003bb5 100%);
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.2) 0%, transparent 70%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 4px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .modal-name {
+            font-size: 1.8rem;
+            color: #ffffff;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-position {
+            color: var(--secondary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        .player-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #000000;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            border: 2px solid var(--primary);
+            animation: modalOpen 0.3s ease;
+        }
+
+        @keyframes modalOpen {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: var(--text);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: var(--secondary);
+            color: var(--bg);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #5a2ab5 100%);
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(198, 255, 51, 0.2) 0%, transparent 70%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 4px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .modal-name {
+            font-size: 1.8rem;
+            color: var(--text);
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-position {
+            color: var(--secondary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        .history-section {
+            background: #ffffff;
+            padding: 4rem 2rem;
+            margin-top: 2rem;
+        }
+
+        .history-section h2 {
+            color: #000000;
+        }
+
+        .history-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .history-text h3 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .history-text p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .championships {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .championship-item {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .championship-item:hover {
+            border-left-color: var(--secondary);
+            transform: translateX(10px);
+        }
+
+        .trophy-icon {
+            font-size: 2.5rem;
+        }
+
+        .championship-info h4 {
+            color: var(--text);
+            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
+        }
+
+        .championship-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .championship-year {
+            color: var(--secondary) !important;
+            font-weight: bold;
+        }
+
+        .matches-section {
+            background: #ffffff;
+            padding: 4rem 2rem;
+            margin-top: 2rem;
+        }
+
+        .matches-section h2 {
+            color: var(--secondary);
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .match-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 5px 25px rgba(255, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .match-date {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-name {
+            color: var(--text);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .vs {
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 0 0.5rem;
+        }
+
+        .match-venue {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .match-venue span {
+            color: var(--primary);
+        }
+
+        footer {
+            background: #ffffff;
+            padding: 2rem;
+            text-align: center;
+            border-top: 2px solid var(--primary);
+            margin-top: 0;
+        }
+
+        footer p {
+            color: var(--text-muted);
+        }
+
+        .social-links {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .history-content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 2.2rem;
+                letter-spacing: 3px;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .player-card {
+                width: 160px;
+                height: 160px;
+            }
+
+            .player-icon {
+                font-size: 2.5rem;
+            }
+
+            .player-name {
+                font-size: 0.85rem;
+            }
+
+            section {
+                padding: 3rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">
+            <div class="nav-logo-placeholder">⚡</div>
+        </div>
+        <ul>
+            <li><a href="#jugadores">Jugadores</a></li>
+            <li><a href="#coaches">Coaches</a></li>
+            <li><a href="#historia">Historia</a></li>
+            <li><a href="#partidos">Próximos Partidos</a></li>
+        </ul>
+    </nav>
+
+    <section id="jugadores">
+        <div class="section-title-container">
+            ROSTER
+        </div>
+        <div class="section-subtitle-container">
+            Jugadores
+        </div>
+        <div class="players-grid">
+            <div class="player-card" onclick="showPlayerModal(0)">
+                <div class="player-number-badge">10</div>
+                <div class="player-left">
+                    <div class="player-name">Santiago Rivera</div>
+                    <div class="player-position">Base</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">80 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.85 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">24 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">3 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Ciudad de México</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(1)">
+                <div class="player-number-badge">7</div>
+                <div class="player-left">
+                    <div class="player-name">Mateo González</div>
+                    <div class="player-position">Escolta</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">85 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.90 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">22 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">2 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Guadalajara</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(2)">
+                <div class="player-number-badge">23</div>
+                <div class="player-left">
+                    <div class="player-name">Diego Hernández</div>
+                    <div class="player-position">Alero</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">90 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.95 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">26 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">5 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Monterrey</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(3)">
+                <div class="player-number-badge">32</div>
+                <div class="player-left">
+                    <div class="player-name">Alejandro Torres</div>
+                    <div class="player-position">Ala-Pívot</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">100 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">2.02 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">25 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">4 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Puebla</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(4)">
+                <div class="player-number-badge">55</div>
+                <div class="player-left">
+                    <div class="player-name">Carlos Mendoza</div>
+                    <div class="player-position">Pívot</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">115 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">2.10 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">28 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">6 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Tijuana</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(5)">
+                <div class="player-number-badge">5</div>
+                <div class="player-left">
+                    <div class="player-name">Javier López</div>
+                    <div class="player-position">Base</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">75 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.78 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">21 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">1 año</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Querétaro</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(6)">
+                <div class="player-number-badge">15</div>
+                <div class="player-left">
+                    <div class="player-name">Daniel Flores</div>
+                    <div class="player-position">Escolta</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">82 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.88 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">23 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">2 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">León</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(7)">
+                <div class="player-number-badge">42</div>
+                <div class="player-left">
+                    <div class="player-name">Roberto Sánchez</div>
+                    <div class="player-position">Ala-Pívot</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">98 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">2.00 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">27 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">3 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Mérida</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="coaches">
+
+         <div class="section-subtitle-container coaches">
+            Coaches
+        </div>
+        <div class="players-grid">
+            <div class="player-card" onclick="showPlayerModal(0)">
+                <div class="player-number-badge">10</div>
+                <div class="player-left">
+                    <div class="player-name">Santiago Rivera</div>
+                    <div class="player-position">Base</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">80 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.85 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">24 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">3 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Ciudad de México</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(1)">
+                <div class="player-number-badge">7</div>
+                <div class="player-left">
+                    <div class="player-name">Mateo González</div>
+                    <div class="player-position">Escolta</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">85 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.90 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">22 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">2 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Guadalajara</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card" onclick="showPlayerModal(2)">
+                <div class="player-number-badge">23</div>
+                <div class="player-left">
+                    <div class="player-name">Diego Hernández</div>
+                    <div class="player-position">Alero</div>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="player-stat-label">Peso</span>
+                            <span class="player-stat-value">90 kg</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Estatura</span>
+                            <span class="player-stat-value">1.95 m</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Edad</span>
+                            <span class="player-stat-value">26 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Años en equipo</span>
+                            <span class="player-stat-value">5 años</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="player-stat-label">Ciudad</span>
+                            <span class="player-stat-value">Monterrey</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-right">
+                    <div class="player-photo">
+                        <div class="player-photo-placeholder">📷</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <div class="player-modal" id="playerModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-header">
+                <div class="modal-circle">
+                    <div class="modal-number" id="modalNumber">10</div>
+                </div>
+                <div class="modal-name" id="modalName">Santiago Rivera</div>
+                <div class="modal-position" id="modalPosition">Base</div>
+            </div>
+            <div class="modal-body">
+                <div class="stat-row">
+                    <span class="stat-label">Edad</span>
+                    <span class="stat-value" id="modalAge">24 años</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Altura</span>
+                    <span class="stat-value" id="modalHeight">1.85 m</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Peso</span>
+                    <span class="stat-value" id="modalWeight">80 kg</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Puntos por Partido</span>
+                    <span class="stat-value" id="modalPoints">18.5</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Asistencias</span>
+                    <span class="stat-value" id="modalAssists">7.2</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Rebotes</span>
+                    <span class="stat-value" id="modalRebounds">3.8</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="historia" class="history-section">
+        <div class="section-title-container">
+           NUESTRA HISTORIA
+        </div>
+        <div class="history-content">
+            <div class="history-text">
+                <h3>Origen y Evolución</h3>
+                <p>Thunders fue fundado en 2015 con la visión de convertirnos en uno de los equipos más competitivos del league. Desde nuestros inicios, hemos demostrado una pasión inquebrantable por el basketball y un compromiso con la excelencia.</p>
+                <p>A lo largo de los años, nuestro equipo ha evolucionado, incorporando talentos extraordinarios y formando una plantilla que combina experiencia con la energía de jóvenes promesas. Cada temporada, escribimos nuevos capítulos en nuestra historia.</p>
+                <p>Nuestra filosofía se basa en el trabajo en equipo, la disciplina y la mejora continua. Los Thunders representamos no solo un equipo, sino una comunidad de aficionados que nos apoyan en cada partido.</p>
+            </div>
+            <div class="championships">
+                <div class="championship-item">
+                    <div class="trophy-icon">🏆</div>
+                    <div class="championship-info">
+                        <h4>Liga Nacional <span class="championship-year">2023</span></h4>
+                        <p>Primer lugar en la temporada regular y playoffs</p>
+                    </div>
+                </div>
+                <div class="championship-item">
+                    <div class="trophy-icon">🏆</div>
+                    <div class="championship-info">
+                        <h4>Campeonato Regional <span class="championship-year">2022</span></h4>
+                        <p>Victoria histórica en tiempo extra</p>
+                    </div>
+                </div>
+                <div class="championship-item">
+                    <div class="trophy-icon">🏆</div>
+                    <div class="championship-info">
+                        <h4>Copa Invierno <span class="championship-year">2021</span></h4>
+                        <p>Primer título internacional del club</p>
+                    </div>
+                </div>
+                <div class="championship-item">
+                    <div class="trophy-icon">🥈</div>
+                    <div class="championship-info">
+                        <h4>Subcampión Liga Nacional <span class="championship-year">2020</span></h4>
+                        <p>Mejor temporada en la historia del equipo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="partidos" class="matches-section">
+        <div class="section-title-container">
+            PROXIMOS PARTIDOS
+        </div>
+        <div class="matches-grid">
+            <div class="match-card">
+                <div class="match-date">📅 22 de Febrero 2026</div>
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-logo">⚡</div>
+                        <div class="team-name">Thunders</div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="team">
+                        <div class="team-logo">🔥</div>
+                        <div class="team-name">Raptors</div>
+                    </div>
+                </div>
+                <div class="match-venue"><span>🏟️</span> Arena Central - 19:00 hrs</div>
+            </div>
+            <div class="match-card">
+                <div class="match-date">📅 28 de Febrero 2026</div>
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-logo">🌟</div>
+                        <div class="team-name">Estrellas</div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="team">
+                        <div class="team-logo">⚡</div>
+                        <div class="team-name">Thunders</div>
+                    </div>
+                </div>
+                <div class="match-venue"><span>🏟️</span> Gimnasio Municipal - 18:30 hrs</div>
+            </div>
+            <div class="match-card">
+                <div class="match-date">📅 5 de Marzo 2026</div>
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-logo">⚡</div>
+                        <div class="team-name">Thunders</div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="team">
+                        <div class="team-logo">🦁</div>
+                        <div class="team-name">Leones</div>
+                    </div>
+                </div>
+                <div class="match-venue"><span>🏟️</span> Arena Central - 20:00 hrs</div>
+            </div>
+            <div class="match-card">
+                <div class="match-date">📅 12 de Marzo 2026</div>
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-logo">🦅</div>
+                        <div class="team-name">Águilas</div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="team">
+                        <div class="team-logo">⚡</div>
+                        <div class="team-name">Thunders</div>
+                    </div>
+                </div>
+                <div class="match-venue"><span>🏟️</span> Estadio Deportivo - 19:30 hrs</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Thunders - Todos los derechos reservados</p>
+        <div class="social-links">
+            <a href="#">📘</a>
+            <a href="#">📷</a>
+            <a href="#">🐦</a>
+            <a href="#">📺</a>
+        </div>
+    </footer>
+
+    <script>
+        const players = [
+            { name: 'Santiago Rivera', number: 10, position: 'Base', age: '24 años', height: '1.85 m', weight: '80 kg', points: '18.5', assists: '7.2', rebounds: '3.8' },
+            { name: 'Mateo González', number: 7, position: 'Escolta', age: '22 años', height: '1.90 m', weight: '85 kg', points: '15.2', assists: '4.5', rebounds: '4.1' },
+            { name: 'Diego Hernández', number: 23, position: 'Alero', age: '26 años', height: '1.95 m', weight: '90 kg', points: '20.3', assists: '3.8', rebounds: '6.5' },
+            { name: 'Alejandro Torres', number: 32, position: 'Ala-Pívot', age: '25 años', height: '2.02 m', weight: '100 kg', points: '12.8', assists: '2.5', rebounds: '9.2' },
+            { name: 'Carlos Mendoza', number: 55, position: 'Pívot', age: '28 años', height: '2.10 m', weight: '115 kg', points: '10.5', assists: '1.8', rebounds: '12.3' },
+            { name: 'Javier López', number: 5, position: 'Base', age: '21 años', height: '1.78 m', weight: '75 kg', points: '8.5', assists: '5.8', rebounds: '2.2' },
+            { name: 'Daniel Flores', number: 15, position: 'Escolta', age: '23 años', height: '1.88 m', weight: '82 kg', points: '14.0', assists: '3.5', rebounds: '3.0' },
+            { name: 'Roberto Sánchez', number: 42, position: 'Ala-Pívot', age: '27 años', height: '2.00 m', weight: '98 kg', points: '11.2', assists: '2.0', rebounds: '7.8' }
+        ];
+
+        function showPlayerModal(playerIndex) {
+            const player = players[playerIndex];
+            document.getElementById('modalNumber').textContent = player.number;
+            document.getElementById('modalName').textContent = player.name;
+            document.getElementById('modalPosition').textContent = player.position;
+            document.getElementById('modalAge').textContent = player.age;
+            document.getElementById('modalHeight').textContent = player.height;
+            document.getElementById('modalWeight').textContent = player.weight;
+            document.getElementById('modalPoints').textContent = player.points;
+            document.getElementById('modalAssists').textContent = player.assists;
+            document.getElementById('modalRebounds').textContent = player.rebounds;
+            
+            document.getElementById('playerModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('playerModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('playerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
