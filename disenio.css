@@ -318,3 +318,15 @@
             *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
             html { scroll-behavior: auto; }
         }
+
+        /* Resultados — ui-ux-pro-max: badge compacto + marcador hero, reutiliza tokens */
+        .match-card.won { border: 2px solid #16a34a; position: relative; }
+        .match-card.won:hover { border-color: #16a34a; box-shadow: 0 12px 30px rgba(22,163,74,.18); }
+        .match-tag.won { background: #16a34a; white-space: nowrap; }
+        .match-score { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: #0a0a0a;
+                       padding: 0 .5rem; white-space: nowrap; letter-spacing: 1px; }
+        .match-result { text-align: center; font-weight: 800; font-size: .8rem; text-transform: uppercase;
+                        letter-spacing: 2px; color: #16a34a; margin-bottom: 1rem; white-space: nowrap;
+                        overflow: hidden; text-overflow: ellipsis; }
+        .team.winner .team-name { color: var(--color-primary); }
+        .team.winner .team-logo.red { box-shadow: 0 0 0 3px #16a34a; }
