@@ -258,3 +258,146 @@ if (heroImg) heroImg.addEventListener('error', function () { heroImg.style.displ
     posts = posts.map((p, i) => ({ id: p.id || (1000 + i), likes: p.likes || 0, ...p }));
     render();
 })();
+
+/* Galería por álbum — carruseles scroll-snap + lightbox por álbum (sin librerías) */
+(function () {
+    const box = document.getElementById('lightbox');
+    if (!box) return;
+    const img = document.getElementById('lightboxImg');
+    const count = document.getElementById('lightboxCount');
+    const cap = document.getElementById('lightboxCap');
+    let list = [];
+    let idx = 0;
+    let lastFocus = null;
+
+    function lbShow(i) {
+        if (!list.length) return;
+        idx = (i + list.length) % list.length;
+        const t = list[idx];
+        img.src = t.getAttribute('data-full');
+        const inner = t.querySelector('img');
+        img.alt = inner ? inner.alt : '';
+        if (count) count.textContent = (idx + 1) + ' / ' + list.length;
+        if (cap) cap.textContent = t.getAttribute('aria-label') || '';
+    }
+    function lbOpen(slides, i) {
+        list = slides;
+        lastFocus = document.activeElement;
+        lbShow(i);
+        box.classList.add('active');
+        box.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('lightboxClose').focus();
+    }
+    function lbClose() {
+        box.classList.remove('active');
+        box.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = 'auto';
+        img.src = '';
+        list = [];
+        if (lastFocus) lastFocus.focus();
+    }
+    document.getElementById('lightboxClose').addEventListener('click', lbClose);
+    document.getElementById('lightboxPrev').addEventListener('click', (e) => { e.stopPropagation(); lbShow(idx - 1); });
+    document.getElementById('lightboxNext').addEventListener('click', (e) => { e.stopPropagation(); lbShow(idx + 1); });
+    box.addEventListener('click', (e) => { if (e.target === box) lbClose(); });
+    document.addEventListener('keydown', (e) => {
+        if (!box.classList.contains('active')) return;
+        if (e.key === 'Escape') lbClose();
+        else if (e.key === 'ArrowLeft') lbShow(idx - 1);
+        else if (e.key === 'ArrowRight') lbShow(idx + 1);
+    });
+
+    // Un motor por álbum: flechas, dots, contador y reveal on-scroll
+    document.querySelectorAll('.album').forEach(function (album) {
+        const track = album.querySelector('.car-track');
+        const slides = [...album.querySelectorAll('.car-slide[data-full]')];
+        const dotsWrap = album.querySelector('.car-dots');
+        const countEl = album.querySelector('.album-count');
+        if (!track || !slides.length) return;
+        // Pocas fotos: modo compacto sin carrusel (llenan la fila)
+        if (slides.length <= 3) track.parentElement.classList.add('few');
+
+        // Dots generados por JS (uno por foto)
+        const dots = slides.map((_, i) => {
+            const d = document.createElement('button');
+            d.type = 'button';
+            d.setAttribute('aria-label', 'Ir a la foto ' + (i + 1));
+            d.addEventListener('click', () => scrollTo(i));
+            dotsWrap.appendChild(d);
+            return d;
+        });
+        function activeIndex() {
+            const w = track.clientWidth || 1;
+            return Math.min(slides.length - 1, Math.max(0, Math.round(track.scrollLeft / (track.scrollWidth - w) * (slides.length - 1) || 0)));
+        }
+        function paint() {
+            const a = activeIndex();
+            dots.forEach((d, i) => d.classList.toggle('on', i === a));
+            if (countEl) countEl.textContent = (a + 1) + ' / ' + slides.length;
+        }
+        function step() {
+            const slide = slides[0];
+            const gap = parseFloat(getComputedStyle(track).columnGap) || 12;
+            return Math.round(slide.getBoundingClientRect().width + gap);
+        }
+        function scrollTo(i) { track.scrollTo({ left: i * step(), behavior: 'smooth' }); }
+        album.querySelector('.car-btn.prev').addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+        album.querySelector('.car-btn.next').addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+        let raf = null;
+        track.addEventListener('scroll', () => {
+            if (raf) return;
+            raf = requestAnimationFrame(() => { raf = null; paint(); });
+        }, { passive: true });
+        slides.forEach((t, i) => t.addEventListener('click', () => lbOpen(slides, i)));
+        paint();
+
+        // Reveal al entrar en viewport (respeta prefers-reduced-motion por CSS)
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver((entries, obs) => {
+                entries.forEach(en => { if (en.isIntersecting) { album.classList.add('in'); obs.unobserve(album); } });
+            }, { threshold: 0.12 }).observe(album);
+        } else {
+            album.classList.add('in');
+        }
+    });
+})();
+
+/* Sala de video — player principal + playlist (escalable a N videos) */
+(function () {
+    const main = document.getElementById('vMain');
+    const title = document.getElementById('vTitle');
+    const meta = document.getElementById('vMeta');
+    const items = [...document.querySelectorAll('.vitem')];
+    if (!main || !items.length) return;
+
+    function fmt(sec) {
+        if (!isFinite(sec) || sec <= 0) return '–:––';
+        const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+        return m + ':' + String(s).padStart(2, '0');
+    }
+    // Duración real de cada video sin reproducirlo
+    items.forEach((it) => {
+        const probe = document.createElement('video');
+        probe.preload = 'metadata';
+        probe.src = it.getAttribute('data-src');
+        probe.onloadedmetadata = () => {
+            const el = it.querySelector('[data-dur]');
+            if (el) el.textContent = fmt(probe.duration);
+        };
+        probe.onerror = () => {
+            const el = it.querySelector('[data-dur]');
+            if (el) el.textContent = '–:––';
+        };
+    });
+
+    items.forEach((it) => it.addEventListener('click', () => {
+        items.forEach((x) => { x.classList.remove('on'); x.setAttribute('aria-selected', 'false'); });
+        it.classList.add('on');
+        it.setAttribute('aria-selected', 'true');
+        main.src = it.getAttribute('data-src');
+        if (title) title.textContent = it.getAttribute('data-title') || '';
+        if (meta) meta.textContent = it.getAttribute('data-meta') || '';
+        main.focus({ preventScroll: true });
+    }));
+})();
