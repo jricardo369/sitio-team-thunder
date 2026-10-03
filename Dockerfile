@@ -6,7 +6,12 @@ FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Sitio
+# NOTA auto-arranque en EC2: la policy de reinicio NO se fija en el Dockerfile,
+# se fija al crear el contenedor con --restart unless-stopped (ver deploy.yml)
+# + daemon habilitado con `systemctl enable docker` para que sobreviva reboots.
 COPY index.html /usr/share/nginx/html/index.html
+COPY app.js /usr/share/nginx/html/app.js
+COPY disenio.css /usr/share/nginx/html/disenio.css
 COPY images /usr/share/nginx/html/images
 
 EXPOSE 80

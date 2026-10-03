@@ -55,15 +55,20 @@ jobs:
             fi
 
             echo "== 2. Build imagen =="
+            # Docker daemon debe arrancar solo tras reboot del EC2,
+            # si no el --restart unless-stopped no sirve de nada.
+            sudo systemctl enable --now docker 2>/dev/null || true
             docker build -t "$APP_NAME:latest" .
 
-            echo "== 3. Reemplazar contenedor (puerto $APP_PORT->80) =="
+            echo "== 3. Reemplazar contenedor auto-arrancable (puerto $APP_PORT->80) =="
             docker rm -f "$APP_NAME" 2>/dev/null || true
             docker run -d \
               --name "$APP_NAME" \
               --restart unless-stopped \
               -p "$APP_PORT:80" \
               "$APP_NAME:latest"
+            # Refuerzo idempotente por si el contenedor ya existía con otra policy:
+            docker update --restart unless-stopped "$APP_NAME"
 
             echo "== 4. Limpieza y verificación =="
             docker image prune -f
