@@ -58,6 +58,16 @@ jobs:
             # Docker daemon debe arrancar solo tras reboot del EC2,
             # si no el --restart unless-stopped no sirve de nada.
             sudo systemctl enable --now docker 2>/dev/null || true
+            echo "-- Espacio antes de limpiar --"
+            df -h / | tail -1
+            # Limpieza agresiva ANTES del build: imágenes sin usar, caché y
+            # volúmenes huérfanos (lo que causaba 'no space left on device').
+            # No toca contenedores corriendo (tu backend Java en 8080 sigue intacto).
+            docker image prune -af || true
+            docker builder prune -af || true
+            docker volume prune -f || true
+            echo "-- Espacio tras limpiar --"
+            df -h / | tail -1
             docker build -t "$APP_NAME:latest" .
 
             echo "== 3. Reemplazar contenedor auto-arrancable (puerto $APP_PORT->80) =="
