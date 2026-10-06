@@ -1,14 +1,10 @@
-name: Deploy Thunders a EC2 (8081)
+name: Deploy Thunders a EC2 (puerto 80 /thunder-team)
 
-# Solo rama master, como pediste
+# Solo rama master
 on:
   push:
     branches: [master]
   workflow_dispatch:
-
-env:
-  APP_NAME: thunders
-  APP_PORT: 8081 # <- host en EC2. 8080 está ocupado por tu backend Java, no usarlo aquí.
 
 jobs:
   deploy:
@@ -37,12 +33,10 @@ jobs:
           port: 22
           script: |
             set -e
-            APP_NAME="thunders"
-            APP_PORT="8081"
             DEPLOY_DIR="${{ secrets.EC2_PATH }}"
-            if [ -z "$DEPLOY_DIR" ]; then DEPLOY_DIR="$HOME/sitio-team-thunder"; fi
+            if [ -z "$DEPLOY_DIR" ]; then DEPLOY_DIR="$HOME/sitios/sitios-deploy-vjtech"; fi
 
-            echo "== 1. Actualizar código =="
+            echo "== Actualizar repo de infra =="
             if [ -d "$DEPLOY_DIR/.git" ]; then
               cd "$DEPLOY_DIR"
               git fetch origin master
@@ -50,40 +44,9 @@ jobs:
             else
               mkdir -p "$(dirname "$DEPLOY_DIR")"
               # Usa HTTPS público. Si el repo es privado, cambia a git@github.com:... con deploy key
-              git clone --branch master https://github.com/jricardo369/sitio-team-thunder.git "$DEPLOY_DIR"
+              git clone --branch master https://github.com/jricardo369/sitios-deploy-vjtech.git "$DEPLOY_DIR"
               cd "$DEPLOY_DIR"
             fi
 
-            echo "== 2. Build imagen =="
-            # Docker daemon debe arrancar solo tras reboot del EC2,
-            # si no el --restart unless-stopped no sirve de nada.
-            sudo systemctl enable --now docker 2>/dev/null || true
-            echo "-- Espacio antes de limpiar --"
-            df -h / | tail -1
-            # Limpieza agresiva ANTES del build: imágenes sin usar, caché y
-            # volúmenes huérfanos (lo que causaba 'no space left on device').
-            # No toca contenedores corriendo (tu backend Java en 8080 sigue intacto).
-            docker image prune -af || true
-            docker builder prune -af || true
-            docker volume prune -f || true
-            echo "-- Espacio tras limpiar --"
-            df -h / | tail -1
-            docker build -t "$APP_NAME:latest" .
-
-            echo "== 3. Reemplazar contenedor auto-arrancable (puerto $APP_PORT->80) =="
-            docker rm -f "$APP_NAME" 2>/dev/null || true
-            docker run -d \
-              --name "$APP_NAME" \
-              --restart unless-stopped \
-              -p "$APP_PORT:80" \
-              "$APP_NAME:latest"
-            # Refuerzo idempotente por si el contenedor ya existía con otra policy:
-            docker update --restart unless-stopped "$APP_NAME"
-
-            echo "== 4. Limpieza y verificación =="
-            docker image prune -f
-            sleep 3
-            docker ps --filter "name=$APP_NAME"
-            curl -fsS "http://127.0.0.1:$APP_PORT/healthz" || curl -fsS "http://127.0.0.1:$APP_PORT/" | head -c 200
-            echo ""
-            echo "OK deploy en puerto $APP_PORT"
+            echo "== Deploy (build + proxy puerto 80) =="
+            bash deploy.sh
